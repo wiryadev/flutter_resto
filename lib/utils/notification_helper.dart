@@ -73,7 +73,10 @@ class NotificationHelper {
       titleResto,
       platformChannelSpecifics,
       payload: json.encode(
-        restaurantResponse.toJson(),
+        {
+          'random_number': _randomNumber,
+          'data': restaurantResponse.toJson(),
+        },
       ),
     );
   }
@@ -82,10 +85,9 @@ class NotificationHelper {
     selectNotificationSubject.stream.listen(
       (String payload) async {
         print('Inside selectNotif, Payload: ' + payload + ' Route: ' + route);
-        var data = RestaurantResponse.fromJson(json.decode(payload));
-        var restaurant = data.restaurants[_randomNumber];
+        var data = RestaurantResponse.fromJson(json.decode(payload)['data']);
+        var restaurant = data.restaurants[json.decode(payload)['random_number']];
         print(restaurant.name);
-        print('Route is null');
 
         Navigation.intentWithData('/detail_page', restaurant);
       },

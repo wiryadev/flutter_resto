@@ -1,6 +1,6 @@
 part of 'pages.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   static const routeName = '/detail_page';
 
   final Restaurant restaurant;
@@ -8,7 +8,24 @@ class DetailPage extends StatelessWidget {
   DetailPage({@required this.restaurant});
 
   @override
+  _DetailPageState createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<RestaurantDetailProvider>(context, listen: false)
+          .getDetailRestaurant(widget.restaurant.id);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final detailRestaurant =
+        Provider.of<RestaurantDetailProvider>(context, listen: true)
+            .detailResult;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -16,20 +33,15 @@ class DetailPage extends StatelessWidget {
           children: <Widget>[
             Stack(
               children: <Widget>[
-                Consumer<RestaurantProvider>(
-                  builder: (context, provider, _) {
-                    provider.getDetailRestaurant(restaurant.id);
-                    return Hero(
-                      tag: restaurant.pictureId,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: Image.network(
-                          Constants.baseImageUrl + restaurant.pictureId,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  },
+                Hero(
+                  tag: widget.restaurant.pictureId,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Image.network(
+                      Constants.baseImageUrl + widget.restaurant.pictureId,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
                 SafeArea(
                   child: Column(
@@ -40,7 +52,8 @@ class DetailPage extends StatelessWidget {
                       Consumer<DatabaseProvider>(
                         builder: (context, provider, _) {
                           return FutureBuilder<bool>(
-                            future: provider.isAddedToFavorite(restaurant.id),
+                            future: provider
+                                .isAddedToFavorite(widget.restaurant.id),
                             builder: (contex, snapshot) {
                               var isAddedToFavorite = snapshot.data ?? false;
                               return Row(
@@ -76,15 +89,16 @@ class DetailPage extends StatelessWidget {
                                               ),
                                               onPressed: () =>
                                                   provider.removeFavorite(
-                                                      restaurant.id),
+                                                      widget.restaurant.id),
                                             )
                                           : IconButton(
                                               color: primaryColor,
                                               icon: Icon(
                                                 Icons.favorite_border_rounded,
                                               ),
-                                              onPressed: () => provider
-                                                  .addFavorite(restaurant),
+                                              onPressed: () =>
+                                                  provider.addFavorite(
+                                                      widget.restaurant),
                                             ),
                                     ),
                                   )
@@ -99,7 +113,7 @@ class DetailPage extends StatelessWidget {
                 ),
               ],
             ),
-            Consumer<RestaurantProvider>(
+            Consumer<RestaurantDetailProvider>(
               builder: (context, provider, _) {
                 switch (provider.state) {
                   case ResultState.Loading:
@@ -108,7 +122,7 @@ class DetailPage extends StatelessWidget {
                     );
                     break;
                   case ResultState.HasData:
-                    var result = provider.detailResult.restaurant;
+                    var result = detailRestaurant.restaurant;
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -347,27 +361,4 @@ class DetailPage extends StatelessWidget {
       ),
     );
   }
-
-  // Widget _buildReviewList(BuildContext context, List<CustomerReview> reviews) {
-  //   return ListView.builder(
-  //     scrollDirection: Axis.horizontal,
-  //     itemCount: reviews.length,
-  //     itemBuilder: (context, index) {
-  //       var review = reviews[index];
-  //       print(review.name);
-  //       return Material(
-  //         child: ListTile(
-  //           title: Text(
-  //             review.name,
-  //             style: Theme.of(context)
-  //                 .textTheme
-  //                 .caption
-  //                 .copyWith(color: Colors.white),
-  //           ),
-  //           subtitle: Text(review.review),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 }

@@ -40,6 +40,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
         ChangeNotifierProvider(
+          create: (_) => RestaurantDetailProvider(
+            apiService: ApiService(),
+          ),
+        ),
+        ChangeNotifierProvider(
           create: (_) => SchedulingProvider(),
         ),
         ChangeNotifierProvider(

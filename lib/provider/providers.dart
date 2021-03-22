@@ -9,6 +9,7 @@ import 'package:flutter_resto/utils/result_state.dart';
 import 'package:flutter_resto/utils/utils.dart';
 
 part 'restaurant_provider.dart';
+part 'restaurant_detail_provider.dart';
 part 'scheduling_provider.dart';
 part 'database_provider.dart';
 part 'preferences_provider.dart';

@@ -5,13 +5,11 @@ class RestaurantProvider extends ChangeNotifier {
 
   RestaurantResponse _result;
   SearchResponse _searchResult;
-  DetailResponse _detailResult;
   String _message = '';
   ResultState _state;
 
   RestaurantResponse get result => _result;
   SearchResponse get searchResult => _searchResult;
-  DetailResponse get detailResult => _detailResult;
   String get message => _message;
   ResultState get state => _state;
   bool isSearching = false;
@@ -43,19 +41,6 @@ class RestaurantProvider extends ChangeNotifier {
 
     result.then((value) {
       _searchResult = value;
-    });
-  }
-
-  void getDetailRestaurant(String id) {
-    _state = ResultState.Loading;
-    notifyListeners();
-
-    isSearching = false;
-    Future<dynamic> result;
-    result = _getDetailRestaurant(id);
-
-    result.then((value) {
-      _detailResult = value;
     });
   }
 
@@ -94,27 +79,6 @@ class RestaurantProvider extends ChangeNotifier {
         print('ini di HasData ');
         searchResponses.restaurants.forEach((x) => print(x.name));
         return searchResponses;
-      }
-    } catch (e) {
-      _state = ResultState.Error;
-      notifyListeners();
-      return _message = 'Error --> $e';
-    }
-  }
-
-  Future<dynamic> _getDetailRestaurant(String id) async {
-    print('Ini di detail restaurant ' + id);
-    try {
-      final detailResponses = await apiService.getDetailRestaurant(id);
-      if (detailResponses.error) {
-        _state = ResultState.NoData;
-        notifyListeners();
-        return _message = 'Empty Data';
-      } else {
-        _state = ResultState.HasData;
-        notifyListeners();
-        print('ini di HasData ');
-        return detailResponses;
       }
     } catch (e) {
       _state = ResultState.Error;

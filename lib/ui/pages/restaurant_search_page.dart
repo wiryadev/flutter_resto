@@ -56,7 +56,7 @@ class _RestaurantSearchPageState extends State<RestaurantSearchPage> {
               builder: (context, provider, _) {
                 return provider.isSearching
                     ? showSearchResult()
-                    : showSearchGuide();
+                    : showSearchGuide(context);
               },
             ),
           ),
@@ -162,7 +162,7 @@ class _RestaurantSearchPageState extends State<RestaurantSearchPage> {
     );
   }
 
-  Widget showSearchGuide() {
+  Widget showSearchGuide(BuildContext context) {
     return ListView(
       children: [
         Center(
