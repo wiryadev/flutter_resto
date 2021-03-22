@@ -35,5 +35,13 @@ void main() {
       // assert
       expect(result.restaurants[0].name.contains(query), true);
     });
+
+    test('should return the true when checking the type of response', () async {
+      // act
+      var result = await apiService.getDetailRestaurant('rqdv5juczeskfw1e867');
+
+      // assert
+      await expectLater(result.restaurant, isA<Restaurant>());
+    });
   });
 }
